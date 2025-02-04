@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Name</title>
+    <link rel="stylesheet" href="css/chat_history.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="left">
+        <span class="product-name">Scintillate</span>
+      </div>
+      <div class="center">
+        <button onclick="showPage('chat-wrapper')">Chat history</button>
+        <button onclick="showPage('polling')">Polling</button>
+      </div>
+      <div class="right">
+        <button class="logout">Logout</button>
+      </div>
+    </nav>
+    <section class="chat-wrapper" id="chat-wrapper" style="display: none;">
+        <div class="contact-wrapper">
+            <div class='heading-and-search'>
+                <h3 class="headig-h3">Chats</h3>
+            </div>
+            <div class="search-input">
+                <img src="./src/images/back.svg" alt="XMark" class="solid cancel-search" />
+                <input type="text" name="search-input" id="search-input" placeholder="Search...">
+            </div>
+            <ul class="chat-list">
+                <div class="loader chatlist-loader-js"></div>
+                <div class="no-contacts no-contact-selectx">
+                    <img src="./src/images/empty.png" alt="speech bubble" class="no-contact-img">
+                    <span class='no-chat-text'>No Chats Found</span>
+                </div>
+            </ul>
+            <div class="search-output">
+                <ul class="search-client-list">
+                    <h5 class="search-client-heading">Customers</h5>
+                    <p class="client-not-found"> No Customers Found</p>
+                </ul>
+                <ul class="search-message-list">
+                    <h5 class="search-message-heading">Messages</h5>
+                    <p class="chats-not-found"> No Messages Found</p>
+                </ul>
+            </div>
+        </div>
+        <div class="chat-window">
+            <div class="loader chat-loader-js" hidden></div>
+            <div class="whole-chat-wrapper">
+                <div class="chat-head">
+                    <div class="action-head">
+                        <div class="client-name">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"
+                                class="back-btn">
+                                <path fill="none" d="M0 0h24v24H0z" />
+                                <path d="M7.828 11H20v2H7.828l5.364 5.364-1.414 1.414L4 12l7.778-7.778 1.414 1.414z" />
+                            </svg>
+                            <h3 id="header_name" contenteditable="true">Hello</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-screen">
+                </div>
+                <div class="chat-area">
+                    <input type="text" id="msg-input" maxlength="300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 20 20" id="send-msg">
+                        <title>Send message</title>
+                        <path fill="currentColor"
+                            d="m2.721 2.051l15.355 7.566a.5.5 0 0 1 0 .897L2.72 18.08a.5.5 0 0 1-.704-.576l1.969-7.434l-1.97-7.442a.5.5 0 0 1 .705-.577Zm.543 1.383l1.61 6.082l.062-.012L5 9.5h7a.5.5 0 0 1 .09.992L12 10.5H5a.506.506 0 0 1-.092-.008l-1.643 6.206l13.458-6.632L3.264 3.434Z" />
+                    </svg>
+                    <input type="hidden" id="csrf_token" value="<?= $token; ?>">
+                    <input type="hidden" id="user_id" value="<?= $id; ?>">
+                </div>
+            </div>
+            <div class="no-chat no-user-selectx">
+                <img src="./src/images/communication.png" alt="speech bubble" class="no-chat-img">
+                <span class='no-msg-text'> Please open any chat to view messages <span>
+            </div>
+        </div>
+    </section>
+    <div class="content" id="polling" style="display: none">
+      <h2>Polling Page</h2>
+      <p>This is the polling page content.</p>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const currentUserId = localStorage.getItem('userId');
+      const socket = io("http://localhost:3000", {
+        query: { userId: currentUserId }
+      });
+    </script>
+    <script src="js/chat_history.js"></script>
+  </body>
+</html>
