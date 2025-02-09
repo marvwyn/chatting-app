@@ -9,7 +9,7 @@ async function authenticateUser(req, res, next) {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const user = await User.findByEmail(email);
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -26,8 +26,6 @@ async function authenticateUser(req, res, next) {
     req.token = token;
     req.user = user;
 
-    await User.updateToken(user.id, token);
-    
     next();
   } catch (error) {
     console.error("Authentication error:", error);

@@ -1,50 +1,51 @@
-const connection = require('../config/db');
 
-class Chat {
-    static createTable() {
-        const query = `
-            CREATE TABLE IF NOT EXISTS chats (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                to_user_id INT NOT NULL,
-                message TEXT NOT NULL,
-                created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `;
-        return this.executeQuery(query);
+const { DataTypes,Model } = require('sequelize');
+const sequelize = require('../config/db');
+const User = require('./userModel');
+class Chat extends Model {}
+Chat.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: User,
+                key: 'id'
+            }
+        },
+        to_user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: User,
+                key: 'id'
+            }
+        },
+        message: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        created: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW
+        }
+    },
+    {
+        sequelize,
+        modelName: 'Chat',
+        tableName: 'chats',
+        timestamps: false
     }
+);
 
-    static async getChats(currentUserId, chatUserId) {
-        const query = `
-            SELECT * FROM chats 
-            WHERE (user_id = ? AND to_user_id = ?) 
-            OR (user_id = ? AND to_user_id = ?) 
-            ORDER BY created ASC
-        `;
-        return this.executeQuery(query, [currentUserId, chatUserId, chatUserId, currentUserId]);
-    }
-
-    static async sendChat(currentUserId, chatUserId, message) {
-        const query = 'INSERT INTO chats (user_id, to_user_id, message) VALUES (?, ?, ?)';
-        return this.executeQuery(query, [currentUserId, chatUserId, message]);
-    }
-
-    static async clientList() {
-        const query = 'SELECT username, email, id FROM users';
-        return this.executeQuery(query);
-    }
-
-    static executeQuery(query, params = []) {
-        return new Promise((resolve, reject) => {
-            connection.query(query, params, (err, results) => {
-                if (err) {
-                    console.error("Database query error:", err);
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
-    }
-}
+User.hasMany(Chat, { foreignKey: 'user_id' });
+User.hasMany(Chat, { foreignKey: 'to_user_id' });
+Chat.belongsTo(User, { foreignKey: 'user_id', as: 'sender' });
+Chat.belongsTo(User, { foreignKey: 'to_user_id', as: 'receiver' });
 
 module.exports = Chat;

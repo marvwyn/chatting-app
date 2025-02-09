@@ -4,15 +4,10 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const { app, server } = require('./sockets/socket');
 
-const User = require('./models/userModel');
-const Chat = require('./models/chatModel');
-
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const PORT = process.env.PORT || 3000;
 
-User.createTable();
-Chat.createTable();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

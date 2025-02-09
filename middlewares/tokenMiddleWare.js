@@ -11,7 +11,6 @@ const checkTokenMiddleware = async (req, res, next) => {
   }
 
   const token = tokenHeader.split(' ')[1];
-  console.log('token: ',token);
 
   if (!token) {
     return res.status(403).json({ message: 'Token malformed or missing' });
@@ -20,16 +19,7 @@ const checkTokenMiddleware = async (req, res, next) => {
   try {
     console.log('before decoded: ');
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('after decoded: ');
-  
     req.user = decoded;
-
-    const user = await User.getUsersByToken(token);
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid or expired token' });
-    }
-
-    req.user = user;
     next();
 
   } catch (err) {

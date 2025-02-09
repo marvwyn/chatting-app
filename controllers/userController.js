@@ -1,6 +1,10 @@
-const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const { hashPassword } = require('../utils/hashPassword.js');
+
+(async () => {
+  await User.sync();
+  console.log('Users table is ready');
+})();
 
 const signin = {
   get: (req, res) => {
@@ -30,10 +34,10 @@ const signup = {
     
     try {
       const hashedPassword = await hashPassword(password);
-      await User.create(email, name, hashedPassword);
+      await User.create({ email, username: name, user_password: hashedPassword });
       res.status(200).json({ message: 'User registered successfully' });
     } catch (error) {
-      res.status(500).json({ message: 'Error signing up', error });
+      res.status(500).json({ message: 'Error signing up', error: error.message });
     }
   },
 };
